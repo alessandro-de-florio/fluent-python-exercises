@@ -1,4 +1,4 @@
-from random import shuffle
+from random import shuffle, randint
 from collections import namedtuple
 Carta = namedtuple("Carta" , ("rango" ,"seme"))
 
@@ -8,7 +8,7 @@ separatore_2 = "-" * 40
 
 class MazzoNapoletano:
 
-    ranghi = ['A'] + [str(n) for n in range(2,8)] + "FANTE CAVALLO RE".split(" ")
+    ranghi = ['A'] + [str(n) for n in range(2, 8)] + "FANTE CAVALLO RE".split(" ")
     semi = "SPADE COPPE BASTONI DENARI".split(" ")
 
     def __init__(self):
@@ -66,9 +66,15 @@ class Giocatore:
 
     def fai_mossa(self):
         print("effettua una mossa: ")
-        for numero , carta in range(len(self.mano)) , self.mano:
-            print(f"[{numero + 1}] : {carta[0]} di {carta[1]}")
+        scelta = None
+        while scelta not in range(1, 4):
+            for numero, carta in enumerate(self.mano):
+                print(f"[{numero + 1}] : {carta[0]} di {carta[1]}")
             scelta = int(input(">"))
+            if scelta == 4:
+                print(f"punteggio : {self.punteggio}")
+            elif scelta == 5:
+                print(f"carte prese : {self.carte_prese}")
         mossa = self.mano.pop(scelta - 1)
         return mossa
 
@@ -129,18 +135,18 @@ class Partita:
         return
     
 
-    def resetta_partita(self , giocatori_nella_partita): # i giocatori sono solo nomi , non oggetti
+    def resetta_partita(self , giocatori_nella_partita): #i giocatori sono oggetti
         self.lista_giocatori = giocatori_nella_partita
         self.banco = Banco()
         for giocatore in self.lista_giocatori:
-            giocatore = Giocatore(giocatore) #viene creato l'oggetto giocatore
             self.banco.aggiungi_giocatori(giocatore) #il giocatore viene aggiunto al tavolo
         self.banco.aggiungi_mazzo_napoletano() #il mazzo viene aperto
+        self.punteggi = (11 , 0 , 10 , 0 , 0 , 0 , 0 , 2 , 3 , 4) #valori dei vari ranghi delle carte
     
 
     def determina_vincitore_del_turno(self):
         return self.banco.giocatori[0]
-    
+
     def gioca(self):
         self.banco.mazzetto.mischia_carte() # il mazzo viene mischiato
         self.banco.briscola = self.banco.mazzetto.carte[-1]
@@ -152,16 +158,16 @@ class Partita:
                 self.banco.brsicola = self.banco.mazzetto.carte[-1]
 
         while len(self.banco.mazzetto): #continua a giocare finché il mazzetto non è vuoto
-            for giocatore in self.banco.giocatori:
-                giocatore.mano = self.banco.mazzetto.dai_carte(3)
+            self.banco.distribuisci_carte()
             for giocatore in self.banco.giocatori: #ogni giocatore poggia una carta sul banco
                 nuova_carta_sul_banco = giocatore.fai_mossa() #una mossa viene chiesta al giocatore , il valore di ritorno è una carta
                 self.banco.carte_sul_banco[giocatore] = nuova_carta_sul_banco #la carta viene poggiata sul banco a nome del proprietario
+                print(f"{giocatore} gioca {nuova_carta_sul_banco}")
         
         vincitore_del_turno = self.determina_vincitore_del_turno()
+        print(f"DEBUG: il vincitore del turno è {vincitore_del_turno.nome}")
         vincitore_del_turno.carte_prese += [self.banco.carte_sul_banco[carta_sul_tavolo]
                                             for carta_sul_tavolo in self.banco.carte_sul_banco]
         
-print("hola gringos")
-
-
+if __name__ == "__main__":
+    print("15 e 18 quanto fa?")
