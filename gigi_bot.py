@@ -14,4 +14,11 @@ Calogero = Bot("Calogero")
 Ale = Giocatore("Ale")
 gioco = Partita([Ale, Calogero])
 
+diz = {"Calogero": Calogero}
+diz["Ale"] = Ale
+print(diz)
+for roba in diz:
+    print(roba)
+
 gioco.gioca()
+

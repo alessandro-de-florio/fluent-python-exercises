@@ -157,6 +157,8 @@ class Partita:
                 self.banco.mazzetto.mischia_carte() # mischia di nuovo le carte
                 self.banco.brsicola = self.banco.mazzetto.carte[-1]
 
+        print(f"la briscola è {self.banco.briscola.seme}")
+
         while len(self.banco.mazzetto): #continua a giocare finché il mazzetto non è vuoto
             self.banco.distribuisci_carte()
             for giocatore in self.banco.giocatori: #ogni giocatore poggia una carta sul banco
